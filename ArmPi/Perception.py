@@ -19,7 +19,15 @@ range_rgb = {
     'white': (255, 255, 255),
 }
 
-def get_area_max_contour(contours):
+class Tracker:
+    def __init__(self, color = 'red', tracker_num = 1):
+        self.target_color = color
+        self.tracker_num = tracker_num
+        self.size = (640, 480)
+        self.last_x = 0
+        self.last_y = 0
+
+    def get_area_max_contour(self, contours):
         contour_area = 0
         contour_area_estimate = 0
         area_contour = None
@@ -28,18 +36,10 @@ def get_area_max_contour(contours):
             contour_area_estimate = math.fabs(cv2.contourArea(c))
             if contour_area_estimate > contour_area:
                 contour_area = contour_area_estimate
-                if contour_area_temp > 300:
+                if contour_area_estimate > 300:
                     area_contour = c
 
         return area_contour, contour_area
-
-class Tracker:
-    def __init__(self, color = 'red', tracker_num = 1):
-        self.target_color = color
-        self.tracker_num = tracker_num
-        self.size = (640, 480)
-        self.last_x = 0
-        self.last_y = 0
 
     def track(self, frame: np.ndarray):
         img = frame.copy()
@@ -60,7 +60,7 @@ class Tracker:
         opened = cv2.morphologyEx(frame_mask, cv2.MORPH_OPEN, np.ones((6,6),np.uint8))
         closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, np.ones((6,6),np.uint8))
         contours = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]
-        area_contour, area = get_area_max_contour(contours)
+        area_contour, area = self.get_area_max_contour(contours)
 
         if area_contour is not None and area > 2500:
             # Bounding box
