@@ -87,9 +87,9 @@ if __name__ == '__main__':
     my_camera.camera_open()
 
     #Trackers for RGB colors
-    tracker_red = CubeTracker("red", 0)
-    tracker_green = CubeTracker("green", 1)
-    tracker_blue = CubeTracker("blue", 2)
+    tracker_red = Tracker("red", 0)
+    tracker_green = Tracker("green", 1)
+    tracker_blue = Tracker("blue", 2)
 
     while True:
         img = my_camera.frame
